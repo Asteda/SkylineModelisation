@@ -131,6 +131,7 @@ class SkylineTest {
 
 	@Test
 	void test1() {
+		System.out.println("\n ===== TEST 1 ===== \n");
 		
 		Map<String, String> pref = new HashMap<>();
 		pref.put("Cost", "<");
@@ -147,6 +148,7 @@ class SkylineTest {
 	
 	@Test
 	void test2() {
+		System.out.println("\n ===== TEST 2 ===== \n");
 		
 		Map<String, String> pref = new HashMap<>();
 		pref.put("Cost", ">");
@@ -159,11 +161,13 @@ class SkylineTest {
 		assertTrue(res.get(0).getId() == 1);
 		assertTrue(res.get(1).getId() == 2);
 		assertTrue(res.get(2).getId() == 3);
-		
+	
 	}
 	
 	@Test
 	void test3() {
+		System.out.println("\n ===== TEST 3 ===== \n");
+		
 		
 		Map<String, String> pref = new HashMap<>();
 		pref.put("Cost", "<");
@@ -171,9 +175,11 @@ class SkylineTest {
 		
 		List<Mashup> res = Skyline.computeSkyline(Skyline.mashups, pref);
 		
+		//System.out.println(res.toString());
+		
 		assertEquals(res.size(), 2);
 		
-		System.out.println(res.toString());
+		
 		
 		assertTrue(res.get(0).getId() == 3);
 		assertTrue(res.get(1).getId() == 4);

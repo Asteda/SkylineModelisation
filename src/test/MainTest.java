@@ -84,7 +84,7 @@ public class MainTest {
 		
 		System.out.println(m2.toString());
 		*/
-
+/*
 		List<String> lod1 = new ArrayList();
 		lod1.add("dbpedia.org/resource/Restaurant");
 		List<String> lod2 = new ArrayList();
@@ -197,7 +197,7 @@ public class MainTest {
 		System.out.println("Taille: " + res.size());
 		
 		System.out.println(res.toString());
-
+*/
 	}
 
 }
