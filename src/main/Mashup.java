@@ -35,7 +35,10 @@ public class Mashup {
 	private Map<String, Float> QoS;
 	
 	
-	
+	public static enum MashupHeaders {
+		name, compagny, url, primaryCategory, secondaryCategories, description, 
+		relatedAPI /*comma separated*/, type, submitted
+	}
 	
 	
 	public Mashup() {
