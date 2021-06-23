@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.csv.CSVRecord;
+
+import main.Service.APIHeaders;
+
 public class Mashup {
 	
 	/**
@@ -34,9 +38,18 @@ public class Mashup {
 	 */
 	private Map<String, Float> QoS;
 	
+	/**
+	 * Propriétés du service
+	 */
+	private Map<String, String> properties;
+	
+	/**
+	 * Précise si on affiche ou non les properties du service lors du toString.
+	 */
+	public boolean showProperties;
 	
 	public static enum MashupHeaders {
-		name, compagny, url, primaryCategory, secondaryCategories, description, 
+		name, company, url, primaryCategory, secondaryCategories, description, 
 		relatedAPI /*comma separated*/, type, submitted
 	}
 	
@@ -226,13 +239,31 @@ public class Mashup {
 			res += mapentry.getKey() + "=" + mapentry.getValue() + " / ";
 	    }
 		
-		res += "\nServices: \n";
+		res += "\nServices: ("+this.services.size()+")\n";
 		for(Service s : this.services) {
 			res += s.toString() + "\n"; 
+		}
+		
+		if(this.properties != null && this.showProperties) {
+			res += "\n" + "Properties: \n";
+			for (Map.Entry<String, String> mapentry : this.properties.entrySet()) {
+				res += "- "+ mapentry.getKey() + "\t= " + mapentry.getValue() + " \n";
+		    }
 		}
 		
 		
 		
 		return res;
+	}
+	
+	public void hydrateProperties(CSVRecord record) {
+		properties = new HashMap<>();
+		properties.put("Company", record.get(MashupHeaders.company));
+		properties.put("URL", record.get(MashupHeaders.url));
+		properties.put("Primary Category", record.get(MashupHeaders.primaryCategory));
+		properties.put("Secondary Category", record.get(MashupHeaders.secondaryCategories));
+		properties.put("Mashup Description", record.get(MashupHeaders.description));
+		properties.put("Mashup/App Type", record.get(MashupHeaders.type));
+		properties.put("Submitted", record.get(MashupHeaders.submitted));
 	}
 }

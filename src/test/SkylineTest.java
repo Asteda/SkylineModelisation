@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -20,6 +21,7 @@ class SkylineTest {
 	private static Map<String, String> param ;
 	
 	private static Mashup m1, m2, m3, m4;
+	private static Logger log = Logger.getLogger(MainTest.class);
 	
 	
 	@BeforeAll
@@ -131,7 +133,7 @@ class SkylineTest {
 
 	@Test
 	void test1() {
-		System.out.println("\n ===== TEST 1 ===== \n");
+		log.debug("\n ===== TEST 1 ===== \n");
 		
 		Map<String, String> pref = new HashMap<>();
 		pref.put("Cost", "<");
@@ -148,7 +150,7 @@ class SkylineTest {
 	
 	@Test
 	void test2() {
-		System.out.println("\n ===== TEST 2 ===== \n");
+		log.debug("\n ===== TEST 2 ===== \n");
 		
 		Map<String, String> pref = new HashMap<>();
 		pref.put("Cost", ">");
@@ -166,7 +168,7 @@ class SkylineTest {
 	
 	@Test
 	void test3() {
-		System.out.println("\n ===== TEST 3 ===== \n");
+		log.debug("\n ===== TEST 3 ===== \n");
 		
 		
 		Map<String, String> pref = new HashMap<>();
