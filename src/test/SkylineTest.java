@@ -133,7 +133,7 @@ class SkylineTest {
 
 	@Test
 	void test1() {
-		log.debug("\n ===== TEST 1 ===== \n");
+		log.info(" ===== TEST 1 ===== ");
 		
 		Map<String, String> pref = new HashMap<>();
 		pref.put("Cost", "<");
@@ -146,11 +146,18 @@ class SkylineTest {
 		assertTrue(res.get(0).getId() == 2);
 		assertTrue(res.get(1).getId() == 4);
 		
+		String info = "Test 1, résultat = ";
+		for(Mashup m: res) {
+			info += m.getName() + ", ";
+		}
+		
+		log.info(info);
+		
 	}
 	
 	@Test
 	void test2() {
-		log.debug("\n ===== TEST 2 ===== \n");
+		log.info(" ===== TEST 2 ===== ");
 		
 		Map<String, String> pref = new HashMap<>();
 		pref.put("Cost", ">");
@@ -163,12 +170,19 @@ class SkylineTest {
 		assertTrue(res.get(0).getId() == 1);
 		assertTrue(res.get(1).getId() == 2);
 		assertTrue(res.get(2).getId() == 3);
+		
+		String info = "Test 2, résultat = ";
+		for(Mashup m: res) {
+			info += m.getName() + ", ";
+		}
+		
+		log.info(info);
 	
 	}
 	
 	@Test
 	void test3() {
-		log.debug("\n ===== TEST 3 ===== \n");
+		log.info(" ===== TEST 3 ===== ");
 		
 		
 		Map<String, String> pref = new HashMap<>();
@@ -181,10 +195,116 @@ class SkylineTest {
 		
 		assertEquals(res.size(), 2);
 		
-		
-		
 		assertTrue(res.get(0).getId() == 3);
 		assertTrue(res.get(1).getId() == 4);
+		
+		String info = "Test 3, résultat = ";
+		for(Mashup m: res) {
+			info += m.getName() + ", ";
+		}
+		
+		log.info(info);
+		
+	}
+	
+	@Test
+	void test4() {
+		log.info(" ===== TEST 4 ===== ");
+		
+		
+				
+		Map<String, Float> qos = new HashMap<>();
+		qos.put("ResponseTime", 1.5f);
+		qos.put("Cost", 3500f);
+		
+		Mashup m1 = new Mashup(1, "m1", null, null, null, qos);
+		
+		qos = new HashMap<>();
+		qos.put("ResponseTime", 2.5f);
+		qos.put("Cost", 5500f);
+		
+		Mashup m2 = new Mashup(2, "m2", null, null, null, qos);
+
+		qos = new HashMap<>();
+		qos.put("ResponseTime", 4.5f);
+		qos.put("Cost", 6500f);
+		
+		Mashup m3 = new Mashup(3, "m3", null, null, null, qos);
+
+		qos = new HashMap<>();
+		qos.put("ResponseTime", 9.5f);
+		qos.put("Cost", 3500f);
+		
+		Mashup m4 = new Mashup(4, "m4", null, null, null, qos);
+
+		qos = new HashMap<>();
+		qos.put("ResponseTime", 10.3f);
+		qos.put("Cost", 4500f);
+		
+		Mashup m5 = new Mashup(5, "m5", null, null, null, qos);
+
+		qos = new HashMap<>();
+		qos.put("ResponseTime", 14.7f);
+		qos.put("Cost", 4000f);
+		
+		Mashup m6 = new Mashup(6, "m6", null, null, null, qos);
+
+		qos = new HashMap<>();
+		qos.put("ResponseTime", 8f);
+		qos.put("Cost", 6000f);
+		
+		Mashup m7 = new Mashup(7, "m7", null, null, null, qos);
+
+		qos = new HashMap<>();
+		qos.put("ResponseTime", 7f);
+		qos.put("Cost", 5500f);
+		
+		Mashup m8 = new Mashup(8, "m8", null, null, null, qos);
+
+		qos = new HashMap<>();
+		qos.put("ResponseTime", 6.5f);
+		qos.put("Cost", 7000f);
+		
+		
+		Mashup m9 = new Mashup(9, "m9", null, null, null, qos);
+
+		qos = new HashMap<>();
+		qos.put("ResponseTime", 1f);
+		qos.put("Cost", 7500f);
+		
+		Mashup m10 = new Mashup(10, "m10", null, null, null, qos);
+		
+		Skyline.mashups = new ArrayList<>();
+		Skyline.mashups.add(m1);
+		Skyline.mashups.add(m2);
+		Skyline.mashups.add(m3);
+		Skyline.mashups.add(m4);
+		Skyline.mashups.add(m5);
+		Skyline.mashups.add(m6);
+		Skyline.mashups.add(m7);
+		Skyline.mashups.add(m8);
+		Skyline.mashups.add(m9);
+		Skyline.mashups.add(m10);
+		
+		Map<String, String> pref = new HashMap<>();
+		pref.put("Cost", "<");
+		pref.put("ResponseTime", "<");
+		
+		List<Mashup> res = Skyline.computeSkyline(Skyline.mashups, pref);
+		
+		if(res.size() != 2) log.debug("res.size() = " + res.size());
+				
+		assertEquals(res.size(), 2);
+				
+		assertTrue(res.get(0).getId() == 1);
+		assertTrue(res.get(1).getId() == 10);
+		
+		String info = "Test 4, résultat = ";
+		for(Mashup m: res) {
+			info += m.getName() + ", ";
+		}
+		
+		log.info(info);
 		
 	}
 

@@ -1,13 +1,20 @@
 package main;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.log4j.Logger;
 
+import main.Mashup.MashupHeaders;
 import main.Service.APIHeaders;
+import test.MainTest;
 
 public class Mashup {
 	
@@ -53,6 +60,7 @@ public class Mashup {
 		relatedAPI /*comma separated*/, type, submitted
 	}
 	
+	private static Logger log = Logger.getLogger(MainTest.class);
 	
 	public Mashup() {
 		this.id = 0;
@@ -265,5 +273,52 @@ public class Mashup {
 		properties.put("Mashup Description", record.get(MashupHeaders.description));
 		properties.put("Mashup/App Type", record.get(MashupHeaders.type));
 		properties.put("Submitted", record.get(MashupHeaders.submitted));
+	}
+	
+	public static List<Mashup> lireCSVMashups() throws IOException {
+		Reader csvFile = new FileReader("./csv/MashupV2.csv");
+		
+		Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader()
+				.withHeader(MashupHeaders.class)
+				.parse(csvFile);
+		
+		
+		List<Service> services = new ArrayList<>();
+		List<Mashup> mashups = new ArrayList<>();
+		Map<String, Float> qos;
+		Map<String, String> properties;
+		
+		List<Service> tousLesServices = Service.lireCSVServices(null);
+		
+		long d = System.currentTimeMillis();
+		
+		int id=0;
+		for(CSVRecord record: records) {
+			id++;
+			qos = new HashMap<>();
+			
+			services = Service.extraireServices(tousLesServices, Service.extraireNoms(record.get(MashupHeaders.relatedAPI)));
+			
+			Mashup m = new Mashup(id, record.get(MashupHeaders.name).replaceAll("\"", "").trim(), null, null, services, qos);
+			m.hydrateProperties(record);
+			
+			mashups.add(m);
+		}
+		
+		long duration = System.currentTimeMillis() -d;
+		
+		log.info("Taille mashups: " + mashups.size() + " (duration: "+duration+" ms)");
+		
+		// afficher le premier service avec ses propriétés
+		//mashups.get(0).showProperties = true;
+		
+		//log.info("Mashup 0 : \n" + mashups.get(0).toString());
+		
+		// afficher le troisième service avec ses propriétés
+		mashups.get(2).showProperties = true;
+		mashups.get(2).getServices().get(0).showProperties=true;
+		log.info("Mashup 2 : \n" + mashups.get(2).toString());
+		
+		return mashups;
 	}
 }
