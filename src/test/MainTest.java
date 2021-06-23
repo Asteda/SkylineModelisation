@@ -99,6 +99,8 @@ public class MainTest {
 		
 		List<Service> tousLesServices = lireCSVServices(null);
 		
+		long d = System.currentTimeMillis();
+		
 		int id=0;
 		for(CSVRecord record: records) {
 			id++;
@@ -112,12 +114,14 @@ public class MainTest {
 			mashups.add(m);
 		}
 		
-		log.info("Taille mashups: " + mashups.size());
+		long duration = System.currentTimeMillis() -d;
+		
+		log.info("Taille mashups: " + mashups.size() + " (duration: "+duration+" ms)");
 		
 		// afficher le premier service avec ses propriétés
-		mashups.get(0).showProperties = true;
+		//mashups.get(0).showProperties = true;
 		
-		log.info("Mashup 0 : \n" + mashups.get(0).toString());
+		//log.info("Mashup 0 : \n" + mashups.get(0).toString());
 		
 		// afficher le troisième service avec ses propriétés
 		mashups.get(2).showProperties = true;

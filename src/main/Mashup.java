@@ -261,7 +261,7 @@ public class Mashup {
 		properties.put("Company", record.get(MashupHeaders.company));
 		properties.put("URL", record.get(MashupHeaders.url));
 		properties.put("Primary Category", record.get(MashupHeaders.primaryCategory));
-		properties.put("Secondary Category", record.get(MashupHeaders.secondaryCategories));
+		properties.put("Secondary Categories", record.get(MashupHeaders.secondaryCategories));
 		properties.put("Mashup Description", record.get(MashupHeaders.description));
 		properties.put("Mashup/App Type", record.get(MashupHeaders.type));
 		properties.put("Submitted", record.get(MashupHeaders.submitted));
