@@ -125,7 +125,7 @@ public class MainTest {
 		
 		// afficher le troisième service avec ses propriétés
 		mashups.get(2).showProperties = true;
-		
+		mashups.get(2).getServices().get(0).showProperties=true;
 		log.info("Mashup 2 : \n" + mashups.get(2).toString());
 		
 		return mashups;
