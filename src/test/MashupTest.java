@@ -78,8 +78,8 @@ class MashupTest {
 		s6 = new Service(6, "s6", tags6, lod6, qos6);
 		
 		param = new HashMap<>();
-		param.put("ResponseTime", "AVG");
-		param.put("Cost", "SUM");
+		param.put("ResponseTime", "avg");
+		param.put("Cost", "sum");
 		
 		ArrayList<Service> services = new ArrayList<>();
 		services.add(s1);

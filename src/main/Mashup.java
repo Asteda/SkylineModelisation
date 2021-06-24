@@ -55,6 +55,9 @@ public class Mashup {
 	 */
 	public boolean showProperties;
 	
+	/**
+	 * Enumération permettant l'exploration du fichier csv MashupV2.csv
+	 */
 	public static enum MashupHeaders {
 		name, company, url, primaryCategory, secondaryCategories, description, 
 		relatedAPI /*comma separated*/, type, submitted
@@ -129,25 +132,11 @@ public class Mashup {
 		QoS = qoS;
 	}
 	
-	/**
-	 * Actualise les valeurs des QoS en fonction de la liste des services.
-	 */
-	public void calculateQoS() {
-		if(this.services != null) {
-			this.QoS = new HashMap<>();
-			float sommeResponseTime =0;
-			float sommeCost =0;
-			for(Service s : this.services) {
-				sommeResponseTime += s.getQoS().get("ResponseTime");
-				sommeCost += s.getQoS().get("Cost");
-			}
-			this.QoS.put("ResponseTime", sommeResponseTime / this.services.size());
-			this.QoS.put("Cost", sommeCost);
-		}
-	}
 
 	/**
-	 * Permet de générer aléatoirement un mashup. Le nombre de services composant le mashup ne dépasse pas nMaxSevices. 
+	 * Permet de générer aléatoirement un mashup. Le nombre de services 
+	 * composant le mashup ne dépasse pas nMaxSevices. Après cette méthode
+	 * il faut appeler computeQoS sur le Mashup généré.
 	 * @param nMaxServices nombre maximum de services 
 	 */
 	public static Mashup generateMashup(int nMaxServices) {
@@ -170,51 +159,66 @@ public class Mashup {
 		
 		// Génération du mashup
 		Mashup m = new Mashup(1, "m1", null, null, services, null);
-		m.calculateQoS();
+		
 		
 		return m;
 		
 	}
 	
 	/**
-	 * Permet de calculer les valeurs des QoS du mashup en appliquant les opérations d’agrégations passées en paramètres.
+	 * Permet de calculer les valeurs des QoS du mashup en appliquant les opérations 
+	 * d’agrégations passées en paramètres.
 	 * @param QoSAgreg opérations d'agrégation
 	 */
-	public void computeQoS(Map<String, String> QoSAgreg) { // AVG ou SUM
+	public void computeQoS(Map<String, String> QoSAgreg) { 
 		if(this.services != null) {
 			this.QoS = new HashMap<>();
-			float sommeResponseTime =0;
-			float sommeCost =0;
-			
-			for(Service s : this.services) {
-				sommeResponseTime += s.getQoS().get("ResponseTime");
-				sommeCost += s.getQoS().get("Cost");
-			}
-			
-			float responseTime=0;
-			if(QoSAgreg.containsKey("ResponseTime")) {
-				if(QoSAgreg.get("ResponseTime") == "SUM") {
-					responseTime = sommeResponseTime;
-				}
-				else if (QoSAgreg.get("ResponseTime") == "AVG") {
-					responseTime = sommeResponseTime / this.services.size();
-				}
-			}
-			
-			float cost=0;
-			if(QoSAgreg.containsKey("Cost")) {
-				if(QoSAgreg.get("Cost") == "SUM") {
-					cost = sommeCost;
-				}
-				else if (QoSAgreg.get("Cost") == "AVG") {
-					cost = sommeCost / this.services.size();
-				}
-			}
-			
-			this.QoS.put("ResponseTime", responseTime);
-			this.QoS.put("Cost", cost);
+			for (Map.Entry<String, String> mapentry : QoSAgreg.entrySet()) {
+				this.QoS.put(mapentry.getKey(), 
+						Mashup.computeOneQoS(this.services, mapentry.getKey(), mapentry.getValue()));
+		    }
 			
 		}
+	}
+	
+	/**
+	 * Calcule la valeur d'un QoS grâce aux valeurs de ce QoS dans les services de `services`.
+	 * @param services liste des services
+	 * @param qosName nom du QoS pour lequel on doit calculer la valeur
+	 * @param op opérateur d'agrégation pour calculer le QoS. Valeurs possibles : avg, sum
+	 * @return valeur du QoS pour le Mashup en fonction de l'opérateur d'agrégation
+	 */
+	private static float computeOneQoS(List<Service> services, String qosName, String op) {
+		float value=0;
+		List<Float> qosValues = extractQosValues(services, qosName);
+		if(qosValues.size() > 0) {
+			switch(op) {
+			case "avg":
+				value = (float)qosValues.stream().mapToDouble(x -> x).average().orElse(0);
+				break;
+			case "sum":
+				value = (float)qosValues.stream().mapToDouble(x -> x).sum();
+				break;
+			default: value=0;
+			}
+			
+		}
+		
+		return value;
+	}
+	
+	/**
+	 * Extrait les valeurs d'un QoS pour une liste de services.
+	 * @param services liste des services
+	 * @param qosName nom du QoS dont on doit extraire les valeurs
+	 * @return liste des valeurs de QoS d'une liste de services pour un nom de QoS précis
+	 */
+	private static List<Float> extractQosValues(List<Service> services, String qosName) {
+		List<Float> values = new ArrayList<>();
+		for(Service s: services) {
+			if(s.getQoS().get(qosName) != null) values.add(s.getQoS().get(qosName));
+		}
+		return values;
 	}
 	
 	public String toString() {
@@ -275,6 +279,11 @@ public class Mashup {
 		properties.put("Submitted", record.get(MashupHeaders.submitted));
 	}
 	
+	/**
+	 * Renvoie une liste de Mashup associés aux valeurs du fichier MashupV2.csv.
+	 * @return liste des mashups
+	 * @throws IOException le fichier n'existe pas
+	 */
 	public static List<Mashup> lireCSVMashups() throws IOException {
 		Reader csvFile = new FileReader("./csv/MashupV2.csv");
 		
