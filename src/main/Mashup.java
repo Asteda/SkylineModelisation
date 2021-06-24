@@ -190,7 +190,10 @@ public class Mashup {
 	 */
 	private static float computeOneQoS(List<Service> services, String qosName, String op) {
 		float value=0;
-		List<Float> qosValues = extractQosValues(services, qosName);
+		List<Float> qosValues = new ArrayList<>();
+		for(Service s: services) {
+			if(s.getQoS().get(qosName) != null) qosValues.add(s.getQoS().get(qosName));
+		}
 		if(qosValues.size() > 0) {
 			switch(op) {
 			case "avg":
@@ -207,19 +210,6 @@ public class Mashup {
 		return value;
 	}
 	
-	/**
-	 * Extrait les valeurs d'un QoS pour une liste de services.
-	 * @param services liste des services
-	 * @param qosName nom du QoS dont on doit extraire les valeurs
-	 * @return liste des valeurs de QoS d'une liste de services pour un nom de QoS précis
-	 */
-	private static List<Float> extractQosValues(List<Service> services, String qosName) {
-		List<Float> values = new ArrayList<>();
-		for(Service s: services) {
-			if(s.getQoS().get(qosName) != null) values.add(s.getQoS().get(qosName));
-		}
-		return values;
-	}
 	
 	public String toString() {
 		String res ="";
