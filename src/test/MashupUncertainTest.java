@@ -129,6 +129,62 @@ class MashupUncertainTest {
 	}
 	
 	@Test
+	void testResponseTimeSum() { 
+		Map<String, Map<Float, Float>> qos1 = new HashMap<>();
+		Map<String, Map<Float, Float>> qos2 = new HashMap<>();
+		
+		Map<Float, Float> qos1_cost = new HashMap<>();
+		Map<Float, Float> qos1_rt = new HashMap<>();
+		
+		Map<Float, Float> qos2_cost = new HashMap<>();
+		Map<Float, Float> qos2_rt = new HashMap<>();
+		
+		qos1_cost.put(5f, 0.7f);
+		qos1_cost.put(4f, 0.3f);
+		
+		qos1_rt.put(1f, 0.2f);
+		qos1_rt.put(2f, 0.8f);
+		
+		qos2_cost.put(3f, 0.4f);
+		qos2_cost.put(1f, 0.6f);
+		
+		qos2_rt.put(3f, 0.3f);
+		qos2_rt.put(4f, 0.2f);
+		qos2_rt.put(5f, 0.5f);
+		
+		qos1.put("Cost", qos1_cost);
+		qos1.put("ResponseTime", qos1_rt);
+		
+		qos2.put("Cost", qos2_cost);
+		qos2.put("ResponseTime", qos2_rt);
+		
+		List<ServiceUncertain> services = new ArrayList<>();
+		services.add(new ServiceUncertain(1, "s1", null, null, qos1));
+		services.add(new ServiceUncertain(2, "s2", null, null, qos2));
+		
+		MashupUncertain m = new MashupUncertain(1, "m1", null, null, services, null);
+		
+		
+		Map<String, String> param = new HashMap<>();
+		param.put("ResponseTime", "sum");
+		param.put("Cost", "sum");
+		m.computeQoS(param);
+		
+		//log.info(m.toString());
+		
+		assertTrue(m.getQoSUncertain().size() == 2);
+		assertTrue(m.getQoSUncertain().get("Cost").size() == 2);
+		assertTrue(m.getQoSUncertain().get("ResponseTime").size() == 3);
+				
+		assertEquals(m.getQoSUncertain().get("Cost").get(8.0f), 0.55, 0.001);
+		assertEquals(m.getQoSUncertain().get("Cost").get(5.0f), 0.45, 0.001);
+		assertEquals(m.getQoSUncertain().get("ResponseTime").get(4.0f), 0.25, 0.001);
+		assertEquals(m.getQoSUncertain().get("ResponseTime").get(6.0f), 0.5, 0.001);
+		assertEquals(m.getQoSUncertain().get("ResponseTime").get(5.0f), 0.25, 0.001);
+		
+	}
+	
+	@Test
 	public void testSommeProba() {
 		Map<String, Map<Float, Float>> qos1 = new HashMap<>();
 		Map<Float, Float> qos1_cost = new HashMap<>();
