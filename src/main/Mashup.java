@@ -63,7 +63,7 @@ public class Mashup {
 		relatedAPI /*comma separated*/, type, submitted
 	}
 	
-	private static Logger log = Logger.getLogger(MainTest.class);
+	protected static Logger log = Logger.getLogger(MainTest.class);
 	
 	public Mashup() {
 		this.id = 0;
@@ -132,6 +132,15 @@ public class Mashup {
 		QoS = qoS;
 	}
 	
+	
+
+	public Map<String, String> getProperties() {
+		return properties;
+	}
+
+	public void setProperties(Map<String, String> properties) {
+		this.properties = properties;
+	}
 
 	/**
 	 * Permet de générer aléatoirement un mashup. Le nombre de services 
