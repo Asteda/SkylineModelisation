@@ -1,5 +1,6 @@
 package uncertain;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -101,9 +102,13 @@ public class MashupUncertain extends Mashup {
 		if(this.getServicesUncertain() != null) {
 			this.QoS = new HashMap<>();
 			for (Map.Entry<String, Mashup.Operation> mapentry : QoSAgreg.entrySet()) {
-				this.QoS.put(mapentry.getKey(), 
-						MashupUncertain.computeOneQoSUncertain(this.services, 
-								mapentry.getKey(), mapentry.getValue()));
+				try {
+					this.QoS.put(mapentry.getKey(), 
+							MashupUncertain.computeOneQoSUncertain(this.services, 
+									mapentry.getKey(), mapentry.getValue()));
+				} catch (Exception e) {
+					log.error("An error has occurred when retrieving the method "+e.getMessage());
+				}
 		    }
 			if(!verifQoSProbas(this.QoS)) log.warn("The sum of the probabilities is not equal to 1 !");
 			
@@ -116,8 +121,9 @@ public class MashupUncertain extends Mashup {
 	 * @param qosName nom du QoS pour lequel on doit calculer la valeur
 	 * @param op opérateur d'agrégation pour calculer le QoS. Valeurs possibles : avg, sum
 	 * @return valeur du QoS pour le Mashup en fonction de l'opérateur d'agrégation
+	 * @throws Exception Impossible de trouver la méthode spécifiée
 	 */
-	private static Map<Float, Float> computeOneQoSUncertain(List<ServiceUncertain> services, String qosName, Mashup.Operation op) {
+	private static Map<Float, Float> computeOneQoSUncertain(List<ServiceUncertain> services, String qosName, Mashup.Operation op) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		if(services.size() == 0) {
 			return null;
 		}
@@ -165,21 +171,12 @@ public class MashupUncertain extends Mashup {
 		
 		float value=0;
 		for(int i=0; i<max; i++) {
-			switch(op) {
-			case AVG:
-				value = (float)qosValues.get(i).stream().mapToDouble(x -> x).average().orElse(0);
-				break;
-			case SUM:
-				value = (float)qosValues.get(i).stream().mapToDouble(x -> x).sum();
-				break;
-			default: value=0;
-			}
+			value = (float) Mashup.class.getMethod("calculateAgreg_"+op.toString(), List.class).invoke(null, qosValues.get(i));
 			qosValuesAgreg.add(value);
-			qosProbasAgreg.add((float)qosProbas.get(i).stream().mapToDouble(x -> x).average().orElse(0));
+			qosProbasAgreg.add((float) Mashup.calculateAgreg_AVG(qosProbas.get(i)));
 		}
 		
 		Map<Float, Float> res = new HashMap<>();
-		List<Integer> indexes;
 		float proba;
 		for(int i=0; i<max; i++) {
 			proba=qosProbasAgreg.get(i);
@@ -195,14 +192,6 @@ public class MashupUncertain extends Mashup {
 		
 		
 		
-	}
-	
-	private static List<Integer> getIndexes(List<Float> list, float search) {
-		List<Integer> res = new ArrayList<>();
-		for(int i=0; i<list.size(); i++) {
-			if(list.get(i).equals(search)) res.add(i);
-		}
-		return res;
 	}
 	
 	public String toString() {

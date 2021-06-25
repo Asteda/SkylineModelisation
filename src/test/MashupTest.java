@@ -23,30 +23,30 @@ class MashupTest {
 	
 	@BeforeAll
 	static void initMashup() {
-		List<String> lod1 = new ArrayList();
+		List<String> lod1 = new ArrayList<String>();
 		lod1.add("dbpedia.org/resource/Restaurant");
-		List<String> lod2 = new ArrayList();
+		List<String> lod2 = new ArrayList<String>();
 		lod2.add("dbpedia.org/resource/Hotel");
-		List<String> lod3 = new ArrayList();
+		List<String> lod3 = new ArrayList<String>();
 		lod3.add("dbpedia.org/resource/Inn");
-		List<String> lod4 = new ArrayList();
+		List<String> lod4 = new ArrayList<String>();
 		lod4.add("dbpedia.org/resource/Bread_and_breakfast");
-		List<String> lod5 = new ArrayList();
+		List<String> lod5 = new ArrayList<String>();
 		lod5.add("dbpedia.org/resource/Hotel");
-		List<String> lod6 = new ArrayList();
+		List<String> lod6 = new ArrayList<String>();
 		lod6.add("dbpedia.org/resource/Hotel");
 		
-		List<String> tags1 = new ArrayList();
+		List<String> tags1 = new ArrayList<String>();
 		tags1.add("restaurant");
-		List<String> tags2 = new ArrayList();
+		List<String> tags2 = new ArrayList<String>();
 		tags2.add("Hotel");
-		List<String> tags3 = new ArrayList();
+		List<String> tags3 = new ArrayList<String>();
 		tags3.add("Inn");
-		List<String> tags4 = new ArrayList();
+		List<String> tags4 = new ArrayList<String>();
 		tags4.add("BnB");
-		List<String> tags5 = new ArrayList();
+		List<String> tags5 = new ArrayList<String>();
 		tags5.add("Hotel");
-		List<String> tags6 = new ArrayList();
+		List<String> tags6 = new ArrayList<String>();
 		tags6.add("Hotel");
 		
 		

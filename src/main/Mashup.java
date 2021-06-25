@@ -12,8 +12,6 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.log4j.Logger;
 
-import main.Mashup.MashupHeaders;
-import main.Service.APIHeaders;
 import test.MainTest;
 
 public class Mashup {
@@ -65,8 +63,13 @@ public class Mashup {
 	}
 	
 	public static enum Operation {
-		SUM, AVG
+		SUM, AVG;
+		public String toString() {
+			return this.name();
+		}
 	}
+	
+	
 	
 	protected static Logger log = Logger.getLogger(MainTest.class);
 	
@@ -188,8 +191,12 @@ public class Mashup {
 		if(this.services != null) {
 			this.QoS = new HashMap<>();
 			for (Map.Entry<String, Mashup.Operation> mapentry : QoSAgreg.entrySet()) {
-				this.QoS.put(mapentry.getKey(), 
-						Mashup.computeOneQoS(this.services, mapentry.getKey(), mapentry.getValue()));
+				try {
+					this.QoS.put(mapentry.getKey(), 
+							Mashup.computeOneQoS(this.services, mapentry.getKey(), mapentry.getValue()));
+				} catch (Exception e) {
+					log.error("An error has occurred when retrieving the method "+e.getMessage());
+				}
 		    }
 			
 		}
@@ -201,24 +208,16 @@ public class Mashup {
 	 * @param qosName nom du QoS pour lequel on doit calculer la valeur
 	 * @param op opérateur d'agrégation pour calculer le QoS. Valeurs possibles : avg, sum
 	 * @return valeur du QoS pour le Mashup en fonction de l'opérateur d'agrégation
+	 * @throws Exception impossible de trouver la méthode spécifiée
 	 */
-	private static float computeOneQoS(List<Service> services, String qosName, Mashup.Operation op) {
+	private static float computeOneQoS(List<Service> services, String qosName, Mashup.Operation op) throws Exception {
 		float value=0;
 		List<Float> qosValues = new ArrayList<>();
 		for(Service s: services) {
 			if(s.getQoS().get(qosName) != null) qosValues.add(s.getQoS().get(qosName));
 		}
 		if(qosValues.size() > 0) {
-			switch(op) {
-			case AVG:
-				value = (float)qosValues.stream().mapToDouble(x -> x).average().orElse(0);
-				break;
-			case SUM:
-				value = (float)qosValues.stream().mapToDouble(x -> x).sum();
-				break;
-			default: value=0;
-			}
-			
+			value = (float) Mashup.class.getMethod("calculateAgreg_"+op.toString(), List.class).invoke(null, qosValues);
 		}
 		
 		return value;
@@ -299,7 +298,6 @@ public class Mashup {
 		List<Service> services = new ArrayList<>();
 		List<Mashup> mashups = new ArrayList<>();
 		Map<String, Float> qos;
-		Map<String, String> properties;
 		
 		List<Service> tousLesServices = Service.lireCSVServices(null);
 		
@@ -331,7 +329,13 @@ public class Mashup {
 		mashups.get(2).showProperties = true;
 		mashups.get(2).getServices().get(0).showProperties=true;
 		log.info("Mashup 2 : \n" + mashups.get(2).toString());
-		
 		return mashups;
+	}
+	
+	public static float calculateAgreg_SUM(List<Float> qosValues) {
+		return (float)qosValues.stream().mapToDouble(x -> x).sum();
+	}
+	public static float calculateAgreg_AVG(List<Float> qosValues) {
+		return (float)qosValues.stream().mapToDouble(x -> x).average().orElse(0);
 	}
 }

@@ -10,7 +10,6 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import main.Mashup;
 import main.Service;
 
 class ServiceTest {
@@ -23,12 +22,12 @@ class ServiceTest {
 	@BeforeAll
 	static void initMashup() {
 		
-		LodTags = new ArrayList();
+		LodTags = new ArrayList<String>();
 		LodTags.add("tag 1");
 		LodTags.add("tag 2");
 		LodTags.add("tag 3");
 		
-		tags = new ArrayList();
+		tags = new ArrayList<String>();
 		tags.add("tag 1");
 		tags.add("tag 2");
 		tags.add("tag 3");

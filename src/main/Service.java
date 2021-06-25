@@ -13,7 +13,6 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.log4j.Logger;
 
-import main.Service.APIHeaders;
 import test.MainTest;
 
 public class Service {
@@ -255,7 +254,6 @@ public class Service {
 		
 		List<Service> services = new ArrayList<>();
 		Map<String, Float> qos;
-		Map<String, String> properties;
 		
 		int id=0;
 		boolean add = false;

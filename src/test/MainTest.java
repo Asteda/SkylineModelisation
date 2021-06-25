@@ -1,17 +1,10 @@
 package test;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.*;
 
 import main.Mashup;
-import main.Service;
-import uncertain.MashupUncertain;
-import uncertain.ServiceUncertain;
 
 public class MainTest {
 	
@@ -20,7 +13,7 @@ public class MainTest {
 	
 	public static void main(String[] args) throws IOException {
 		
-		Map<String, Map<Float, Float>> qos1 = new HashMap<>();
+		/*Map<String, Map<Float, Float>> qos1 = new HashMap<>();
 		Map<String, Map<Float, Float>> qos2 = new HashMap<>();
 		
 		Map<Float, Float> qos1_cost = new HashMap<>();
@@ -60,8 +53,9 @@ public class MainTest {
 		param.put("Cost", Mashup.Operation.SUM);
 		m.computeQoS(param);
 		
-		log.info(m.toString());
+		log.info(m.toString());*/
 		
+		log.info(Mashup.Operation.AVG.toString());
 		
 		
 	}
