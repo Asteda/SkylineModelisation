@@ -10,6 +10,7 @@ import main.Service;
 
 public class MashupUncertain extends Mashup {
 	
+	
 	private Map<String, Map<Float,Float>> QoS;
 	private List<ServiceUncertain> services;
 	
@@ -63,9 +64,10 @@ public class MashupUncertain extends Mashup {
 		return services;
 	}
 
-	public void setQoSUncertain(Map<String, Map<Float, Float>> qoS) {
-		if(verifQoSProbas(qoS))
-			QoS = qoS;
+	public void setQoSUncertain(Map<String, Map<Float, Float>> qoS) throws Exception {
+		if(!verifQoSProbas(qoS))
+			throw new Exception("The sum of the probabilities is not equal to 1, please provide a correct QoS");
+		QoS = qoS;
 	}
 	
 	/**
@@ -94,16 +96,16 @@ public class MashupUncertain extends Mashup {
 	 * d’agrégations passées en paramètres.
 	 * @param QoSAgreg opérations d'agrégation
 	 */
-	public void computeQoS(Map<String, String> QoSAgreg) { 
+	public void computeQoS(Map<String, Mashup.Operation> QoSAgreg) { 
 		//log.debug("appel à computeQoS dans MashupUncertain");
 		if(this.getServicesUncertain() != null) {
 			this.QoS = new HashMap<>();
-			for (Map.Entry<String, String> mapentry : QoSAgreg.entrySet()) {
+			for (Map.Entry<String, Mashup.Operation> mapentry : QoSAgreg.entrySet()) {
 				this.QoS.put(mapentry.getKey(), 
 						MashupUncertain.computeOneQoSUncertain(this.services, 
 								mapentry.getKey(), mapentry.getValue()));
 		    }
-			if(!verifQoSProbas(this.QoS)) this.QoS = null;
+			if(!verifQoSProbas(this.QoS)) log.warn("The sum of the probabilities is not equal to 1 !");
 			
 		}
 	}
@@ -115,7 +117,7 @@ public class MashupUncertain extends Mashup {
 	 * @param op opérateur d'agrégation pour calculer le QoS. Valeurs possibles : avg, sum
 	 * @return valeur du QoS pour le Mashup en fonction de l'opérateur d'agrégation
 	 */
-	private static Map<Float, Float> computeOneQoSUncertain(List<ServiceUncertain> services, String qosName, String op) {
+	private static Map<Float, Float> computeOneQoSUncertain(List<ServiceUncertain> services, String qosName, Mashup.Operation op) {
 		if(services.size() == 0) {
 			return null;
 		}
@@ -164,10 +166,10 @@ public class MashupUncertain extends Mashup {
 		float value=0;
 		for(int i=0; i<max; i++) {
 			switch(op) {
-			case "avg":
+			case AVG:
 				value = (float)qosValues.get(i).stream().mapToDouble(x -> x).average().orElse(0);
 				break;
-			case "sum":
+			case SUM:
 				value = (float)qosValues.get(i).stream().mapToDouble(x -> x).sum();
 				break;
 			default: value=0;

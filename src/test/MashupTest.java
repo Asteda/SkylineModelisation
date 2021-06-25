@@ -16,7 +16,7 @@ import main.Service;
 class MashupTest {
 	
 	private static Service s1, s2, s3, s4, s5, s6;
-	private static Map<String, String> param ;
+	private static Map<String, Mashup.Operation> param ;
 	
 	private static Mashup m1, m2, m3, m4;
 	
@@ -78,8 +78,8 @@ class MashupTest {
 		s6 = new Service(6, "s6", tags6, lod6, qos6);
 		
 		param = new HashMap<>();
-		param.put("ResponseTime", "avg");
-		param.put("Cost", "sum");
+		param.put("ResponseTime", Mashup.Operation.AVG);
+		param.put("Cost", Mashup.Operation.SUM);
 		
 		ArrayList<Service> services = new ArrayList<>();
 		services.add(s1);

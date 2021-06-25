@@ -11,10 +11,12 @@ import org.apache.log4j.Logger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import main.Mashup;
 import uncertain.MashupUncertain;
 import uncertain.ServiceUncertain;
 
 class MashupUncertainTest {
+	
 	
 	public static Logger log = Logger.getLogger(MainTest.class);
 	
@@ -55,9 +57,9 @@ class MashupUncertainTest {
 		MashupUncertain m = new MashupUncertain(1, "m1", null, null, services, null);
 		
 		
-		Map<String, String> param = new HashMap<>();
-		param.put("ResponseTime", "avg");
-		param.put("Cost", "sum");
+		Map<String, Mashup.Operation> param = new HashMap<>();
+		param.put("ResponseTime", Mashup.Operation.AVG);
+		param.put("Cost", Mashup.Operation.SUM);
 		m.computeQoS(param);
 		
 		//log.info(m.toString());
@@ -110,9 +112,9 @@ class MashupUncertainTest {
 		MashupUncertain m = new MashupUncertain(1, "m1", null, null, services, null);
 		
 		
-		Map<String, String> param = new HashMap<>();
-		param.put("ResponseTime", "avg");
-		param.put("Cost", "sum");
+		Map<String, Mashup.Operation> param = new HashMap<>();
+		param.put("ResponseTime", Mashup.Operation.AVG);
+		param.put("Cost", Mashup.Operation.SUM);
 		m.computeQoS(param);
 		
 		//log.info(m.toString());
@@ -165,9 +167,9 @@ class MashupUncertainTest {
 		MashupUncertain m = new MashupUncertain(1, "m1", null, null, services, null);
 		
 		
-		Map<String, String> param = new HashMap<>();
-		param.put("ResponseTime", "sum");
-		param.put("Cost", "sum");
+		Map<String, Mashup.Operation> param = new HashMap<>();
+		param.put("ResponseTime", Mashup.Operation.SUM);
+		param.put("Cost", Mashup.Operation.SUM);
 		m.computeQoS(param);
 		
 		//log.info(m.toString());
@@ -201,17 +203,26 @@ class MashupUncertainTest {
 		
 		MashupUncertain m = new MashupUncertain();
 		
-		m.setQoSUncertain(qos1);
-		
-		assertTrue(m.getQoSUncertain() == null);
+		try {
+			m.setQoSUncertain(qos1);
+		} catch (Exception e) {
+			assertTrue(e.getMessage().contains("The sum of the probabilities is not equal to 1"));
+		}
 		
 		qos1_cost.put(4f, 0.1f); // trop faible
-		m.setQoSUncertain(qos1);
-		assertTrue(m.getQoSUncertain() == null);
+		try {
+			m.setQoSUncertain(qos1);
+		} catch (Exception e) {
+			assertTrue(e.getMessage().contains("The sum of the probabilities is not equal to 1"));
+		}
 		
 		qos1_cost.put(4f, 0.3f); // correct
-		m.setQoSUncertain(qos1);
-		assertTrue(m.getQoSUncertain() != null);
+		try {
+			m.setQoSUncertain(qos1);
+		} catch (Exception e) {
+		}
+		assertEquals(qos1, m.getQoSUncertain());
+	
 	}
 	
 

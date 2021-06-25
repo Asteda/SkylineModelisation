@@ -18,7 +18,7 @@ import main.Skyline;
 class SkylineTest {
 	
 	private static Service s1, s2, s3, s4, s5, s6;
-	private static Map<String, String> param ;
+	private static Map<String, Mashup.Operation> param ;
 	
 	private static Mashup m1, m2, m3, m4;
 	private static Logger log = Logger.getLogger(MainTest.class);
@@ -81,8 +81,8 @@ class SkylineTest {
 		s6 = new Service(6, "s6", tags6, lod6, qos6);
 		
 		param = new HashMap<>();
-		param.put("ResponseTime", "AVG");
-		param.put("Cost", "SUM");
+		param.put("ResponseTime", Mashup.Operation.AVG);
+		param.put("Cost", Mashup.Operation.SUM);
 		
 		ArrayList<Service> services = new ArrayList<>();
 		services.add(s1);

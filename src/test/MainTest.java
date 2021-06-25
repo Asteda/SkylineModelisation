@@ -55,9 +55,9 @@ public class MainTest {
 		MashupUncertain m = new MashupUncertain(1, "m1", null, null, services, null);
 		
 		
-		Map<String, String> param = new HashMap<>();
-		param.put("ResponseTime", "avg");
-		param.put("Cost", "sum");
+		Map<String, Mashup.Operation> param = new HashMap<>();
+		param.put("ResponseTime", Mashup.Operation.AVG);
+		param.put("Cost", Mashup.Operation.SUM);
 		m.computeQoS(param);
 		
 		log.info(m.toString());

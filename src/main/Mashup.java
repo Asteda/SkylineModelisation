@@ -18,6 +18,7 @@ import test.MainTest;
 
 public class Mashup {
 	
+	
 	/**
 	 * Identifiant du mashup
 	 */
@@ -61,6 +62,10 @@ public class Mashup {
 	public static enum MashupHeaders {
 		name, company, url, primaryCategory, secondaryCategories, description, 
 		relatedAPI /*comma separated*/, type, submitted
+	}
+	
+	public static enum Operation {
+		SUM, AVG
 	}
 	
 	protected static Logger log = Logger.getLogger(MainTest.class);
@@ -179,10 +184,10 @@ public class Mashup {
 	 * d’agrégations passées en paramètres.
 	 * @param QoSAgreg opérations d'agrégation
 	 */
-	public void computeQoS(Map<String, String> QoSAgreg) { 
+	public void computeQoS(Map<String, Mashup.Operation> QoSAgreg) { 
 		if(this.services != null) {
 			this.QoS = new HashMap<>();
-			for (Map.Entry<String, String> mapentry : QoSAgreg.entrySet()) {
+			for (Map.Entry<String, Mashup.Operation> mapentry : QoSAgreg.entrySet()) {
 				this.QoS.put(mapentry.getKey(), 
 						Mashup.computeOneQoS(this.services, mapentry.getKey(), mapentry.getValue()));
 		    }
@@ -197,7 +202,7 @@ public class Mashup {
 	 * @param op opérateur d'agrégation pour calculer le QoS. Valeurs possibles : avg, sum
 	 * @return valeur du QoS pour le Mashup en fonction de l'opérateur d'agrégation
 	 */
-	private static float computeOneQoS(List<Service> services, String qosName, String op) {
+	private static float computeOneQoS(List<Service> services, String qosName, Mashup.Operation op) {
 		float value=0;
 		List<Float> qosValues = new ArrayList<>();
 		for(Service s: services) {
@@ -205,10 +210,10 @@ public class Mashup {
 		}
 		if(qosValues.size() > 0) {
 			switch(op) {
-			case "avg":
+			case AVG:
 				value = (float)qosValues.stream().mapToDouble(x -> x).average().orElse(0);
 				break;
-			case "sum":
+			case SUM:
 				value = (float)qosValues.stream().mapToDouble(x -> x).sum();
 				break;
 			default: value=0;
