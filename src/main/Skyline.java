@@ -68,7 +68,7 @@ public class Skyline {
 		
 	}
 	
-	private static boolean compare(float value1, float value2, String operator) {
+	protected static boolean compare(float value1, float value2, String operator) {
 		
 		switch(operator) {
 		case "<":

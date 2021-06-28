@@ -254,9 +254,14 @@ public class Mashup {
 			res += mapentry.getKey() + "=" + mapentry.getValue() + " / ";
 	    }
 		
-		res += "\nServices: ("+this.services.size()+")\n";
-		for(Service s : this.services) {
-			res += s.toString() + "\n"; 
+		if(this.services == null) {
+			res += "\nServices: null";
+		}
+		else {
+			res += "\nServices: ("+this.services.size()+")\n";
+			for(Service s : this.services) {
+				res += s.toString() + "\n"; 
+			}
 		}
 		
 		if(this.properties != null && this.showProperties) {

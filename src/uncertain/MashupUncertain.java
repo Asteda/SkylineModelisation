@@ -229,11 +229,16 @@ public class MashupUncertain extends Mashup {
 		    }	
 		}
 			
-		
-		res += "\nServices: ("+this.services.size()+")\n";
-		for(Service s : this.services) {
-			res += s.toString() + "\n"; 
+		if(this.services == null) {
+			res += "\nServices: null";
 		}
+		else {
+			res += "\nServices: ("+this.services.size()+")\n";
+			for(Service s : this.services) {
+				res += s.toString() + "\n"; 
+			}
+		}
+		
 		
 		if(this.getProperties() != null && this.showProperties) {
 			res += "\n" + "Properties: \n";
