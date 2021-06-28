@@ -271,15 +271,15 @@ public class Mashup {
 		return res;
 	}
 	
-	public void hydrateProperties(CSVRecord record) {
+	public void hydrateProperties(CSVRecord record, List<String> headerslist) {
+		if(headerslist.size() != record.size()) {
+			log.error("Parameters haven't the same size");
+			return;
+		}
 		properties = new HashMap<>();
-		properties.put("Company", record.get(MashupHeaders.company));
-		properties.put("URL", record.get(MashupHeaders.url));
-		properties.put("Primary Category", record.get(MashupHeaders.primaryCategory));
-		properties.put("Secondary Categories", record.get(MashupHeaders.secondaryCategories));
-		properties.put("Mashup Description", record.get(MashupHeaders.description));
-		properties.put("Mashup/App Type", record.get(MashupHeaders.type));
-		properties.put("Submitted", record.get(MashupHeaders.submitted));
+		for(int i=0; i<headerslist.size(); i++) {
+			properties.put(headerslist.get(i), record.get(i).replace("\"", "").trim());
+		}
 	}
 	
 	/**
@@ -289,11 +289,8 @@ public class Mashup {
 	 */
 	public static List<Mashup> lireCSVMashups() throws IOException {
 		Reader csvFile = new FileReader("./csv/MashupV2.csv");
-		
-		Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader()
-				.withHeader(MashupHeaders.class)
-				.parse(csvFile);
-		
+				
+		Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(csvFile);
 		
 		List<Service> services = new ArrayList<>();
 		List<Mashup> mashups = new ArrayList<>();
@@ -303,17 +300,47 @@ public class Mashup {
 		
 		long d = System.currentTimeMillis();
 		
+		List<String> headerslist = new ArrayList<>();
+		
 		int id=0;
+		int indexOfRelatedAPI = -1, indexOfName = -1;
 		for(CSVRecord record: records) {
+			if(id==0) {
+				// HEADERS
+				for(int i=0; i<record.size(); i++) {
+					headerslist.add(record.get(i).replace("\"", "").trim());
+					if(record.get(i).contains("Related API")) indexOfRelatedAPI = i;
+					if(indexOfName == -1 && record.get(i).contains("Name")) indexOfName = i;
+				}
+				if(indexOfRelatedAPI == -1)
+					log.warn("Index of column Related API cannot be found, mashups won't get their"
+							+ " services' list");
+				if(indexOfName == -1) {
+					log.warn("Index of name cannot be found, mashups will be named by the first column");
+					indexOfName = 0;
+				}
+			}
+			else {
+				// DATA
+				
+				if(indexOfRelatedAPI > 0) {
+					services = Service.extraireServices(tousLesServices, 
+							Service.extraireNoms(record.get(indexOfRelatedAPI)));
+				}
+				else {
+					services = new ArrayList<>();
+				}
+				
+				qos = new HashMap<>();
+				Mashup m = new Mashup(id, record.get(indexOfName).replaceAll("\"", "").trim(), null, null, services, qos);
+				m.hydrateProperties(record, headerslist);
+				
+				mashups.add(m);
+			}
+			
+			
+			
 			id++;
-			qos = new HashMap<>();
-			
-			services = Service.extraireServices(tousLesServices, Service.extraireNoms(record.get(MashupHeaders.relatedAPI)));
-			
-			Mashup m = new Mashup(id, record.get(MashupHeaders.name).replaceAll("\"", "").trim(), null, null, services, qos);
-			m.hydrateProperties(record);
-			
-			mashups.add(m);
 		}
 		
 		long duration = System.currentTimeMillis() -d;

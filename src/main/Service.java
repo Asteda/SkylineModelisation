@@ -204,42 +204,17 @@ public class Service {
 	 * Vous devez donc initiliser l'objet CSVRecord en lui précisant d'utiliser
 	 * cette énumération comme headers. 
 	 * @param record données sources
+	 * @param headerslist liste des entêtes de données. La taille doit être la même que record
 	 */
-	public void hydrateProperties(CSVRecord record) {
-		
+	public void hydrateProperties(CSVRecord record, List<String> headerslist) {
+		if(headerslist.size() != record.size()) {
+			log.error("Parameters haven't the same size");
+			return;
+		}
 		properties = new HashMap<>();
-		properties.put("API Provider's Home Page", record.get(APIHeaders.providersPage));
-		properties.put("API Portal / Home Page", record.get(APIHeaders.homePage));
-		properties.put("API Endpoint", record.get(APIHeaders.endpoint));
-		properties.put("Version", record.get(APIHeaders.version));
-		properties.put("Type", record.get(APIHeaders.type));
-		properties.put("Architectural Style", record.get(APIHeaders.architecturalStyle));
-		properties.put("Device Specific", record.get(APIHeaders.deviceSpecific));
-		properties.put("Scope", record.get(APIHeaders.scope));
-		properties.put("Primary Category", record.get(APIHeaders.primaryCategory));
-		properties.put("Secondary Categories", record.get(APIHeaders.secondaryCategories));
-		properties.put("API Description", record.get(APIHeaders.description));
-		properties.put("Is the API Related to any other API ?", record.get(APIHeaders.related));
-		properties.put("How is this API different ?", record.get(APIHeaders.howDifferent));
-		properties.put("Docs Home Page URL", record.get(APIHeaders.docsPage));
-		properties.put("Twitter URL", record.get(APIHeaders.twitterURL));
-		properties.put("Support Email Address", record.get(APIHeaders.supportEmail));
-		properties.put("API Forum / Message Boards", record.get(APIHeaders.forum));
-		properties.put("Interactive Console URL", record.get(APIHeaders.interactiveConsole));
-		properties.put("Terms Of Service URL", record.get(APIHeaders.termsOfService));
-		properties.put("Description File URL (if public)", record.get(APIHeaders.descriptionFile));
-		properties.put("Description File Type", record.get(APIHeaders.descriptionFileType));
-		properties.put("Is the API Design/Description Non-Proprietary ?", record.get(APIHeaders.nonProprietary));
-		properties.put("SSL Support", record.get(APIHeaders.SSLsupport));
-		properties.put("Authentication Model", record.get(APIHeaders.authenticationModel));
-		properties.put("Supported Request Formats", record.get(APIHeaders.supportedRequestFormats));
-		properties.put("Other Request Format", record.get(APIHeaders.otherRequestFormat));
-		properties.put("Supported Response Formats", record.get(APIHeaders.responseFormats));
-		properties.put("Is This a Hypermedia API?", record.get(APIHeaders.hypermediaAPI));
-		properties.put("Restricted Access ( Requires Provider Approval )", record.get(APIHeaders.restrictedAccess));
-		properties.put("Is This an Unofficial API?", record.get(APIHeaders.unofficialAPI));
-		properties.put("Submitted", record.get(APIHeaders.submitted));
-		
+		for(int i=0; i<headerslist.size(); i++) {
+			properties.put(headerslist.get(i), record.get(i).replace("\"", "").trim());
+		}
 	}
 	
 	
@@ -247,34 +222,52 @@ public class Service {
 
 		Reader csvFile = new FileReader("./csv/APIV3.csv");
 		
-		Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader()
-				.withHeader(APIHeaders.class)
-				.parse(csvFile);
-		
+		Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(csvFile);
 		
 		List<Service> services = new ArrayList<>();
 		Map<String, Float> qos;
 		
-		int id=0;
+		List<String> headerslist = new ArrayList<>();
+		
+		int id=0, indexOfName = -1;
 		boolean add = false;
 		for(CSVRecord record: records) {
-			if(names != null) {
-				if(names.contains(record.get(APIHeaders.name))) {
-					add=true;
-				}
-				else add=false;
-			}
-			else add=true;
 			
-			if(add) {
-				id++;
-				qos = new HashMap<>();
-				
-				Service s = new Service(id, record.get(APIHeaders.name).replaceAll("\"", "").trim(), null, null, qos);
-				s.hydrateProperties(record);
-				
-				services.add(s);
+			if(id==0) {
+				// HEADERS
+				for(int i=0; i<record.size(); i++) {
+					headerslist.add(record.get(i).replace("\"", "").trim());
+					if(indexOfName == -1 && record.get(i).contains("Name")) indexOfName = i;
+				}
+				if(indexOfName == -1) {
+					log.warn("Index of name cannot be found, services will be named by the first column");
+					indexOfName = 0;
+				}
+					
 			}
+			else {
+				// DATA
+				if(names != null) {
+					if(names.contains(record.get(indexOfName))) {
+						add=true;
+					}
+					else add=false;
+				}
+				else add=true;
+				
+				if(add) {
+					
+					qos = new HashMap<>();
+					
+					Service s = new Service(id, record.get(indexOfName).replaceAll("\"", "").trim(), 
+							null, null, qos);
+					s.hydrateProperties(record, headerslist);
+					
+					services.add(s);
+				}
+			}
+			
+			id++;
 			
 		}
 		
