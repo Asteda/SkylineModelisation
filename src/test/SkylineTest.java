@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import main.Mashup;
 import main.Service;
 import main.Skyline;
+import main.Mashup.Operation;
 
 class SkylineTest {
 	
@@ -22,6 +23,9 @@ class SkylineTest {
 	
 	private static Mashup m1, m2, m3, m4;
 	private static Logger log = Logger.getLogger(MainTest.class);
+	
+	public static Mashup[] mashups;
+	public static Service[] services;
 	
 	
 	@BeforeAll
@@ -130,7 +134,8 @@ class SkylineTest {
 		Skyline.mashups.add(m4);
 		
 	}
-
+	
+	
 	@Test
 	void test1() {
 		log.info(" ===== TEST 1 ===== ");
@@ -305,6 +310,66 @@ class SkylineTest {
 		}
 		
 		log.info(info);
+		
+	}
+	
+	
+	@BeforeAll
+	static void initServicesMashups() { /* pour test complet */
+		services = new Service[9];
+		mashups = new Mashup[6];
+		Map<String, Float> qos;
+		List<Service> s;
+		float values[][] = {
+				/*s1*/{1.5f, 3.5f}, /*s2*/{2.5f, 5.5f}, /*s3*/{4.5f, 6.5f}, /*s4*/{6.5f, 3.5f}, 
+				/*s5*/{9f, 4.5f}, /*s6*/{10.7f, 4f}, /*s7*/{6f, 6f}, /*s8*/{5.5f, 5.5f}, /*s9*/{1f, 7f}
+		};
+		
+		for(int i=0; i<services.length; i++) {
+			qos = new HashMap<>();
+			qos.put("ResponseTime", values[i][0]);
+			qos.put("Cost", values[i][1]);
+			services[i] = new Service(i+1, "s"+(i+1), null, null, qos);
+		}
+		
+		int numServiceForMashup[][] = {
+				/*m1*/ {1,2,3}, /*m2*/ {1,4,5,6}, /*m3*/ {1,5,7,8,9}, /*m4*/ {1,4,6}, /*m5*/ {1,4,9}, /*m6*/ {1,5,6,7,8,9}
+		};
+		
+		param = new HashMap<>();
+		param.put("ResponseTime", Operation.AVG);
+		param.put("Cost", Operation.SUM);
+		for(int i=0; i<mashups.length; i++) {
+			s = new ArrayList<>();
+			for(int j=0; j<numServiceForMashup[i].length; j++) {
+				s.add(services[numServiceForMashup[i][j]-1]);
+			}
+			mashups[i] = new Mashup(i+1, "m"+(i+1), null, null, s, null);
+			mashups[i].computeQoS(param);
+		}
+		
+	}
+
+	@Test 
+	void test5() { /* verif skyline pour les mashups de la liste mashups */
+		log.info(" ===== TEST 5 ===== ");
+		// on est censé avoir 3 mashups : 2, 5 ,6 ?
+		
+		Skyline.mashups = new ArrayList<>();
+		for(int i=0; i<mashups.length; i++) {
+			Skyline.mashups.add(mashups[i]);
+		}
+		Map<String, String> pref = new HashMap<>();
+		pref.put("Cost", "<");
+		pref.put("ResponseTime", "<");
+		List<Mashup> res = Skyline.computeSkyline(Skyline.mashups, pref);
+		
+		String texte="res=[";
+		for(Mashup m: res) {
+			texte+=m.getName()+" ";
+		}
+		log.info(texte.trim()+"]");
+		
 		
 	}
 

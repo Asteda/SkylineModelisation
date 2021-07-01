@@ -3,17 +3,21 @@ package test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import main.Mashup;
 import uncertain.MashupUncertain;
 import uncertain.SkylineUncertain;
 
 class SkylineUncertainTest {
+	public static Logger log = Logger.getLogger(MainTest.class);
 	
 	static Map<Float, Float> qos1_w = new HashMap<>();
 	static Map<Float, Float> qos2_w = new HashMap<>();
@@ -23,6 +27,8 @@ class SkylineUncertainTest {
 	static List<MashupUncertain> liste = new ArrayList<>();
 	static Map<String, String> qospref = new HashMap<>();
 	static MashupUncertain m1, m2;
+	
+	public static MashupUncertain[] mashups;
 	
 	@BeforeAll
 	static void initialisation() {
@@ -58,6 +64,9 @@ class SkylineUncertainTest {
 
 		qospref.put("cost", "<=");
 		qospref.put("weight", "<=");
+		
+		MashupUncertainTest.initialiserServices();
+		mashups = MashupUncertainTest.mashups;
 	}
 
 	@Test
@@ -122,6 +131,25 @@ class SkylineUncertainTest {
 		List<MashupUncertain> m = SkylineUncertain.computeUncertainSkyline(liste, qospref, 0.5f);
 		
 		assertEquals(m.size(), 0);
+	}
+	
+	@Test
+	void testComputeSkyline_tableau() {
+		Map<String, String> qospref = new HashMap<>();
+		qospref.put("Cost", ">");
+		qospref.put("ResponseTime", ">");
+		ArrayList<MashupUncertain> m = new ArrayList<>();
+		for(int i=0; i<mashups.length; i++) m.add(mashups[i]);
+		
+		List<MashupUncertain> liste = 
+				SkylineUncertain.computeUncertainSkyline(m, qospref, 0.1f);
+		
+		String texte="res=[";
+		for(Mashup ma: liste) {
+			texte+=ma.getName()+" ";
+		}
+		log.info(texte.trim()+"]");
+		
 	}
 	
 

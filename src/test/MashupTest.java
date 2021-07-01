@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import main.Mashup;
+import main.Mashup.Operation;
 import main.Service;
 
 class MashupTest {
@@ -19,6 +20,9 @@ class MashupTest {
 	private static Map<String, Mashup.Operation> param ;
 	
 	private static Mashup m1, m2, m3, m4;
+	
+	public static Mashup[] mashups;
+	public static Service[] services;
 	
 	
 	@BeforeAll
@@ -158,6 +162,71 @@ class MashupTest {
 		assertTrue(m4.getQoS().get("Cost") == 20);
 	}
 	
+	@BeforeAll
+	static void initServicesMashups() { /* pour test complet */
+		services = new Service[9];
+		mashups = new Mashup[6];
+		Map<String, Float> qos;
+		List<Service> s;
+		float values[][] = {
+				/*s1*/{1.5f, 3.5f}, /*s2*/{2.5f, 5.5f}, /*s3*/{4.5f, 6.5f}, /*s4*/{6.5f, 3.5f}, 
+				/*s5*/{9f, 4.5f}, /*s6*/{10.3f, 4f}, /*s7*/{6f, 6f}, /*s8*/{5.5f, 5.5f}, /*s9*/{1f, 7f}
+		};
+		
+		for(int i=0; i<services.length; i++) {
+			qos = new HashMap<>();
+			qos.put("ResponseTime", values[i][0]);
+			qos.put("Cost", values[i][1]);
+			services[i] = new Service(i+1, "s"+(i+1), null, null, qos);
+		}
+		
+		int numServiceForMashup[][] = {
+				/*m1*/ {1,2,3}, /*m2*/ {1,4,5,6}, /*m3*/ {1,5,7,8,9}, /*m4*/ {1,4,6}, /*m5*/ {1,4,9}, /*m6*/ {1,5,6,7,8,9}
+		};
+		
+		param = new HashMap<>();
+		param.put("ResponseTime", Operation.AVG);
+		param.put("Cost", Operation.SUM);
+		for(int i=0; i<mashups.length; i++) {
+			s = new ArrayList<>();
+			for(int j=0; j<numServiceForMashup[i].length; j++) {
+				s.add(services[numServiceForMashup[i][j]-1]);
+			}
+			mashups[i] = new Mashup(i+1, "m"+(i+1), null, null, s, null);
+			mashups[i].computeQoS(param);
+		}
+		
+		
+	}
 	
-
+	@Test
+	void test0() {
+		assertEquals(mashups[0].getQoS().get("ResponseTime"), 2.83, 0.01);
+		assertEquals(mashups[0].getQoS().get("Cost"), 15.5, 0.01);
+	}
+	@Test
+	void test1() {
+		assertEquals(mashups[1].getQoS().get("ResponseTime"), 6.83, 0.01);
+		assertEquals(mashups[1].getQoS().get("Cost"), 15.5, 0.01);
+	}
+	@Test
+	void test2() {
+		assertEquals(mashups[2].getQoS().get("ResponseTime"), 4.6, 0.01);
+		assertEquals(mashups[2].getQoS().get("Cost"), 26.5, 0.01);
+	}
+	@Test
+	void test3() {
+		assertEquals(mashups[3].getQoS().get("ResponseTime"), 6.1, 0.01);
+		assertEquals(mashups[3].getQoS().get("Cost"), 11, 0.01);
+	}
+	@Test
+	void test4() {
+		assertEquals(mashups[4].getQoS().get("ResponseTime"), 3, 0.01);
+		assertEquals(mashups[4].getQoS().get("Cost"), 14, 0.01);
+	}
+	@Test
+	void test5() {
+		assertEquals(mashups[5].getQoS().get("ResponseTime"), 5.55, 0.01);
+		assertEquals(mashups[5].getQoS().get("Cost"), 30.5, 0.01);
+	}
 }

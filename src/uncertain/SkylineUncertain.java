@@ -18,9 +18,11 @@ public class SkylineUncertain extends Skyline {
 			Map<String,String> QoSPref, float threshold) {
 		List<MashupUncertain> S = new ArrayList<>();
 		
-		float belief=0;
+		boolean debug=false;
 		
+		float belief=0;
 		for(MashupUncertain mi : M) {
+			//log.debug("COMPARAISON "+mi.getName());
 			for(MashupUncertain mj : M) {
 				belief = 0;
 				if(mi != mj) {
@@ -28,14 +30,19 @@ public class SkylineUncertain extends Skyline {
 					for(Map.Entry<String,String> mapentry: QoSPref.entrySet()) {
 						belief = belief * bel(mi.getQoSUncertain().get(mapentry.getKey()), 
 								mj.getQoSUncertain().get(mapentry.getKey()), mapentry.getValue());
+						if(debug) log.debug("belief="+belief);
 					}
 					
-					if(belief == 0) break;
+					if(belief == 0) {
+						if(debug) log.debug("belief à 0 pour "+mi.getName()+" vs "+mj.getName());
+						break;
+					}
 				}
 				else belief = 1;
-				//log.debug(mi.getName() + " vs " + mj.getName() + "belief="+belief);
+				if(debug) log.debug(mi.getName() + " vs " + mj.getName() + " belief="+belief);
 				if(belief < threshold) break;
 			}
+			if(debug) log.info("fin pour "+mi.getName()+" belief="+belief);
 			if(belief >= threshold) {
 				S.add(mi);
 			}
@@ -52,10 +59,15 @@ public class SkylineUncertain extends Skyline {
 			for(Map.Entry<Float, Float> mapentry_j: qos_j.entrySet()) {
 				if(compare(mapentry_i.getKey(), mapentry_j.getKey(), op)) {
 					s += mapentry_j.getValue();
+					//log.debug("Valeur acceptée pour "+mapentry_i.getKey()+" vs " + mapentry_j.getKey());
+				}
+				else {
+					//log.debug("Valeur non acceptée pour "+mapentry_i.getKey()+" vs " + mapentry_j.getKey());
 				}
 			}
 			x = s*mapentry_i.getValue();
 			sum_all += x;
+			//log.debug("sum_all="+sum_all);
 		}
 		return sum_all;
 	}

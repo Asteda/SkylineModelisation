@@ -24,7 +24,7 @@ public class Skyline {
 	 */
 	public static List<Mashup> computeSkyline(List<Mashup> mashups, Map<String, String> QoSPref) {
 		
-		boolean debug = false; /* Mettre à true pour obtenir des logs de déboggage */
+		boolean debug = true; /* Mettre à true pour obtenir des logs de déboggage */
 		
 		List<Mashup> result = new ArrayList<>();
 		boolean dominated = false;
@@ -60,6 +60,7 @@ public class Skyline {
 			}
 			if(!dominated) {
 				result.add(mashups.get(i));
+				if(debug) log.debug("AJOUTER "+mashups.get(i).getName()+ " A LA LISTE");
 			}
 			if(debug) log.debug("FIN BOUCLE dominated = " + dominated);
 		}
