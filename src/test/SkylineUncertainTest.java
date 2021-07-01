@@ -136,13 +136,13 @@ class SkylineUncertainTest {
 	@Test
 	void testComputeSkyline_tableau() {
 		Map<String, String> qospref = new HashMap<>();
-		qospref.put("Cost", ">");
-		qospref.put("ResponseTime", ">");
+		qospref.put("Cost", "<=");
+		qospref.put("ResponseTime", "<=");
 		ArrayList<MashupUncertain> m = new ArrayList<>();
 		for(int i=0; i<mashups.length; i++) m.add(mashups[i]);
 		
 		List<MashupUncertain> liste = 
-				SkylineUncertain.computeUncertainSkyline(m, qospref, 0.1f);
+				SkylineUncertain.computeUncertainSkyline(m, qospref, 0.3f);
 		
 		String texte="res=[";
 		for(Mashup ma: liste) {

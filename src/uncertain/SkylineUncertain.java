@@ -20,21 +20,28 @@ public class SkylineUncertain extends Skyline {
 		
 		boolean debug=false;
 		
-		float belief=0;
+		float belief=0, bel1;
 		for(MashupUncertain mi : M) {
 			//log.debug("COMPARAISON "+mi.getName());
 			for(MashupUncertain mj : M) {
 				belief = 0;
 				if(mi != mj) {
 					belief = 1;
+					bel1 = 0;
 					for(Map.Entry<String,String> mapentry: QoSPref.entrySet()) {
-						belief = belief * bel(mi.getQoSUncertain().get(mapentry.getKey()), 
-								mj.getQoSUncertain().get(mapentry.getKey()), mapentry.getValue());
+						
+						if(bel(mi.getQoSUncertain().get(mapentry.getKey()), 
+								mj.getQoSUncertain().get(mapentry.getKey()), mapentry.getValue()) > 0) {
+							bel1 = bel(mi.getQoSUncertain().get(mapentry.getKey()), 
+									mj.getQoSUncertain().get(mapentry.getKey()), mapentry.getValue());
+							belief = belief * bel1;
+						}
+						
 						if(debug) log.debug("belief="+belief);
 					}
 					
-					if(belief == 0) {
-						if(debug) log.debug("belief à 0 pour "+mi.getName()+" vs "+mj.getName());
+					if(bel1 == 0) {
+						if(debug) log.debug("bel1 à 0 pour "+mi.getName()+" vs "+mj.getName());
 						break;
 					}
 				}
