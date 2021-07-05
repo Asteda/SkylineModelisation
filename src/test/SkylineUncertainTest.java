@@ -134,7 +134,7 @@ class SkylineUncertainTest {
 	}
 	
 	@Test
-	void testComputeSkyline_tableau() {
+	void testComputeSkyline_tableau1() {
 		Map<String, String> qospref = new HashMap<>();
 		qospref.put("Cost", "<=");
 		qospref.put("ResponseTime", "<=");
@@ -142,13 +142,59 @@ class SkylineUncertainTest {
 		for(int i=0; i<mashups.length; i++) m.add(mashups[i]);
 		
 		List<MashupUncertain> liste = 
-				SkylineUncertain.computeUncertainSkyline(m, qospref, 0.3f);
+				SkylineUncertain.computeUncertainSkyline(m, qospref, 0.20f);
 		
 		String texte="res=[";
 		for(Mashup ma: liste) {
 			texte+=ma.getName()+" ";
 		}
-		log.info(texte.trim()+"]");
+		//log.info(texte.trim()+"]");
+		
+		assertTrue(texte.contains("m1") && texte.contains("m2") 
+				&& texte.contains("m4") && texte.contains("m5"));
+		
+	}
+	
+	@Test
+	void testComputeSkyline_tableau2() {
+		Map<String, String> qospref = new HashMap<>();
+		qospref.put("Cost", "<=");
+		qospref.put("ResponseTime", "<=");
+		ArrayList<MashupUncertain> m = new ArrayList<>();
+		for(int i=0; i<mashups.length; i++) m.add(mashups[i]);
+		
+		List<MashupUncertain> liste = 
+				SkylineUncertain.computeUncertainSkyline(m, qospref, 0.25f);
+		
+		String texte="res=[";
+		for(Mashup ma: liste) {
+			texte+=ma.getName()+" ";
+		}
+		//log.info(texte.trim()+"]");
+		
+		assertTrue(texte.contains("m1") 
+				&& texte.contains("m4"));
+		
+	}
+	
+	@Test
+	void testComputeSkyline_tableau3() {
+		Map<String, String> qospref = new HashMap<>();
+		qospref.put("Cost", "<=");
+		qospref.put("ResponseTime", "<=");
+		ArrayList<MashupUncertain> m = new ArrayList<>();
+		for(int i=0; i<mashups.length; i++) m.add(mashups[i]);
+		
+		List<MashupUncertain> liste = 
+				SkylineUncertain.computeUncertainSkyline(m, qospref, 0.30f);
+		
+		String texte="res=[";
+		for(Mashup ma: liste) {
+			texte+=ma.getName()+" ";
+		}
+		//log.info(texte.trim()+"]");
+		
+		assertTrue(texte.contains("m4"));
 		
 	}
 	
