@@ -33,9 +33,9 @@ class HotelTest {
 		List<Hotel> res = Hotel.dataTransform(Hotel.getListeComplet(), 2, 1, null, periodPref);
 		//Hotel.log.info(res.toString());
 		assertTrue(res.size() == 3);
-		assertTrue(res.get(0).getName() == "a");
-		assertTrue(res.get(1).getName() == "b");
-		assertTrue(res.get(2).getName() == "e");
+		assertTrue(res.toString().contains("a") 
+				&& res.toString().contains("b")
+				&& res.toString().contains("e"));
 	}
 	
 	@Test
@@ -43,7 +43,9 @@ class HotelTest {
 		String periodPref = "[3,7]";
 		List<Hotel> res = Hotel.dataTransform(Hotel.getListeIncomplet(), 2, 1, null, periodPref);
 		Hotel.log.info(res.toString());
-		//assertTrue(res.size() == 10);
+		assertTrue(res.size() == 9);
+		assertFalse(res.toString().contains("i")); // sauf i
+		assertFalse(res.toString().contains("k")); // sauf k
 	}
 	
 	@Test
@@ -51,7 +53,11 @@ class HotelTest {
 		String periodPref = "[2,4]";
 		List<Hotel> res = Hotel.dataTransform(Hotel.getListeIncomplet(), 2, 1, null, periodPref);
 		Hotel.log.info(res.toString());
-		//assertTrue(res.size() == 10);
+		assertTrue(res.size() == 4);
+		assertTrue(res.toString().contains("a") 
+				&& res.toString().contains("f")
+				&& res.toString().contains("h")
+				&& res.toString().contains("j"));
 	}
 
 }
