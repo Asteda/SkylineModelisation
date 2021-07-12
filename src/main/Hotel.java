@@ -1,6 +1,7 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,71 +9,90 @@ import org.apache.log4j.Logger;
 
 import test.MainTest;
 
-public class Hotel {
-	private int id;
-	private String name, period;
-	private float price, distance;
+public class Hotel extends Service {
+	private String period;
+	private Map<String, String> infos;
 	public static Logger log = Logger.getLogger(MainTest.class);
-	public float pi, size;
+	
+	public boolean verboseMode;
 	
 	public Hotel() {
 		this.id = 0;
 		this.name = "";
-		this.period = "[0,0]";
-		this.price = 0;
-		this.distance = 0;
+		this.infos = new HashMap<>();
+		this.infos.put("period", "[0,0]");
+		this.QoS = new HashMap<>();
+		QoS.put("price", 0f);
+		QoS.put("distance", 0f);
+		this.verboseMode=false;
 	}
 
 	public Hotel(int id, String name, String period, float price, float distance) {
 		this.id = id;
 		this.name = name;
-		this.period = period;
-		this.price = price;
-		this.distance = distance;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
+		this.infos = new HashMap<>();
+		this.infos.put("period", period);
+		this.QoS = new HashMap<>();
+		QoS.put("price", price);
+		QoS.put("distance", distance);
+		this.verboseMode=false;
 	}
 
 	public String getPeriod() {
-		return period;
+		return this.infos.get("period");
 	}
 
 	public float getPrice() {
-		return price;
+		return this.QoS.get("price");
 	}
 
 	public float getDistance() {
-		return distance;
+		return this.QoS.get("distance");
+	}
+	
+	public float getPi() {
+		return this.QoS.get("pi");
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public float getSize() {
+		return this.QoS.get("size");
+	}
+	
+	public Map<String, String> getInfos() {
+		return infos;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setInfos(Map<String, String> infos) {
+		this.infos = infos;
 	}
 
 	public void setPeriod(String period) {
-		this.period = period;
+		this.infos.put("period", period);
 	}
 
 	public void setPrice(float price) {
-		this.price = price;
+		this.QoS.put("price", price);
 	}
 
 	public void setDistance(float distance) {
-		this.distance = distance;
+		this.QoS.put("distance", distance);
+	}
+	
+	public void setPi(float pi) {
+		this.QoS.put("pi", pi);
+	}
+	public void setSize(float size) {
+		this.QoS.put("size", size);
 	}
 	
 	public String toString() {
-		return this.name;
+		if(!this.verboseMode)
+			return super.name;
+		else {
+			return "[HOTEL] ID " + this.id + " Name: " + this.name
+					+ "\nInfos: " + this.infos.toString()
+					+ "\nQoS:"+this.QoS.toString()+"\n\n";
+		}
 	}
 	
 	/**
@@ -122,33 +142,33 @@ public class Hotel {
 		List<Hotel> Sres = new ArrayList<>();
 		String Lt;
 		for(Hotel L: S) {
-			Lt = L.getPeriod();
+			Lt = L.getInfos().get(t);
 			if(b1(Lt) != null && b2(Lt) != null && inter(Lt, periodPref)) {
-				L.pi = 0;
-				L.size = Math.min(b2(Lt), b2(periodPref)) - Math.max(b1(Lt), b1(periodPref));
+				L.setPi(0);
+				L.setSize(Math.min(b2(Lt), b2(periodPref)) - Math.max(b1(Lt), b1(periodPref)));
 				Sres.add(L);
 			}
 			else if(b1(Lt) != null && b2(Lt) == null) {
 				if(b1(Lt) >= b1(periodPref) && b1(Lt) <= b2(periodPref)) {
-					L.pi = 0;
-					L.size = 1;
+					L.setPi(0);
+					L.setSize(1);
 					Sres.add(L);
 				}
 				else if(b1(Lt) < b1(periodPref) && (b1(periodPref) - b1(Lt)) <= threshold * step) {
-					L.pi = b1(periodPref) - b1(Lt);
-					L.size = 1;
+					L.setPi(b1(periodPref) - b1(Lt));
+					L.setSize(1);
 					Sres.add(L);
 				}
 			}
 			else if(b1(Lt) == null && b2(Lt) != null) {
 				if(b2(Lt) >= b1(periodPref) && b2(Lt) <= b2(periodPref)) {
-					L.pi = 0;
-					L.size = 1;
+					L.setPi(0);
+					L.setSize(1);;
 					Sres.add(L);
 				}
 				else if(b2(Lt) > b2(periodPref) && (b2(Lt) - b2(periodPref)) <= threshold * step) {
-					L.pi = b2(Lt) - b2(periodPref);
-					L.size = 1;
+					L.setPi(b2(Lt) - b2(periodPref));
+					L.setSize(1);
 					Sres.add(L);
 				}
 			}
@@ -188,5 +208,6 @@ public class Hotel {
 		l.add(new Hotel(11, "k", "[-,-]", 120, 2300));
 		return l;
 	}
+	
 	
 }

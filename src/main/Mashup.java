@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 
 import test.MainTest;
 
-public class Mashup {
+public class Mashup extends Skylineable {
 	
 	
 	/**
@@ -37,12 +37,6 @@ public class Mashup {
 	 * La liste des services composant le mashup
 	 */
 	private List<Service> services;
-	/**
-	 * Une Map pour stocker les paires de chaque QoS d'un service, sous la forme :
-	 * <nom QoS, valeur QoS>. Les valeurs sont calculées à partir de la liste des
-	 * services composant le mashup.
-	 */
-	private Map<String, Float> QoS;
 	
 	/**
 	 * Propriétés du service
@@ -74,31 +68,25 @@ public class Mashup {
 	protected static Logger log = Logger.getLogger(MainTest.class);
 	
 	public Mashup() {
-		this.id = 0;
-		this.name = null;
+		this.setId(0);
+		this.setName("");
 		this.tags = null;
 		LodTags = null;
 		this.services = null;
-		QoS = null;
+		this.setQoS(null);
 	}
 
 	public Mashup(int id, String name, List<String> tags, List<String> logTags, List<Service> services,
 			Map<String, Float> qoS) {
-		this.id = id;
-		this.name = name;
+		this.setId(id);
+		this.setName(name);
 		this.tags = tags;
 		LodTags = logTags;
 		this.services = services;
-		QoS = qoS;
+		this.setQoS(qoS);
 	}
 
-	public int getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
-	}
+	
 
 	public List<String> getTags() {
 		return tags;
@@ -111,19 +99,6 @@ public class Mashup {
 	public List<Service> getServices() {
 		return services;
 	}
-
-	public Map<String, Float> getQoS() {
-		return QoS;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public void setTags(List<String> tags) {
 		this.tags = tags;
 	}
@@ -135,11 +110,6 @@ public class Mashup {
 	public void setServices(List<Service> services) {
 		this.services = services;
 	}
-
-	public void setQoS(Map<String, Float> qoS) {
-		QoS = qoS;
-	}
-	
 	
 
 	public Map<String, String> getProperties() {

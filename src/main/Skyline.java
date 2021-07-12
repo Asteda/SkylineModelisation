@@ -13,7 +13,7 @@ public class Skyline {
 	/**
 	 * Liste de Mashup composant le Skyline
 	 */
-	public static List<Mashup> mashups;
+	public static List<Skylineable> mashups;
 	private static Logger log = Logger.getLogger(MainTest.class);
 
 	/**
@@ -22,11 +22,11 @@ public class Skyline {
 	 * @param QoSPref
 	 * @return
 	 */
-	public static List<Mashup> computeSkyline(List<Mashup> mashups, Map<String, String> QoSPref) {
+	public static List<Skylineable> computeSkyline(List<Skylineable> mashups, Map<String, String> QoSPref) {
 		
-		boolean debug = true; /* Mettre à true pour obtenir des logs de déboggage */
+		boolean debug = false; /* Mettre à true pour obtenir des logs de déboggage */
 		
-		List<Mashup> result = new ArrayList<>();
+		List<Skylineable> result = new ArrayList<>();
 		boolean dominated = false;
 		
 		for(int i=0; i<mashups.size(); i++) {
@@ -60,7 +60,7 @@ public class Skyline {
 			}
 			if(!dominated) {
 				result.add(mashups.get(i));
-				if(debug) log.debug("AJOUTER "+mashups.get(i).getName()+ " A LA LISTE");
+				//if(debug) log.debug("AJOUTER "+mashups.get(i).getName()+ " A LA LISTE");
 			}
 			if(debug) log.debug("FIN BOUCLE dominated = " + dominated);
 		}

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import main.Mashup;
 import main.Service;
 import main.Skyline;
+import main.Skylineable;
 import main.Mashup.Operation;
 
 class SkylineTest {
@@ -144,7 +145,7 @@ class SkylineTest {
 		pref.put("Cost", "<");
 		pref.put("ResponseTime", "<");
 		
-		List<Mashup> res = Skyline.computeSkyline(Skyline.mashups, pref);
+		List<Skylineable> res = Skyline.computeSkyline(Skyline.mashups, pref);
 		
 		assertEquals(res.size(), 2);
 		
@@ -152,8 +153,8 @@ class SkylineTest {
 		assertTrue(res.get(1).getId() == 4);
 		
 		String info = "Test 1, résultat = ";
-		for(Mashup m: res) {
-			info += m.getName() + ", ";
+		for(Skylineable m: res) {
+			info += ((Mashup)m).getName() + ", ";
 		}
 		
 		log.info(info);
@@ -168,7 +169,7 @@ class SkylineTest {
 		pref.put("Cost", ">");
 		pref.put("ResponseTime", "<");
 		
-		List<Mashup> res = Skyline.computeSkyline(Skyline.mashups, pref);
+		List<Skylineable> res = Skyline.computeSkyline(Skyline.mashups, pref);
 		
 		assertEquals(res.size(), 3);
 		
@@ -177,7 +178,7 @@ class SkylineTest {
 		assertTrue(res.get(2).getId() == 3);
 		
 		String info = "Test 2, résultat = ";
-		for(Mashup m: res) {
+		for(Skylineable m: res) {
 			info += m.getName() + ", ";
 		}
 		
@@ -194,7 +195,7 @@ class SkylineTest {
 		pref.put("Cost", "<");
 		pref.put("ResponseTime", ">");
 		
-		List<Mashup> res = Skyline.computeSkyline(Skyline.mashups, pref);
+		List<Skylineable> res = Skyline.computeSkyline(Skyline.mashups, pref);
 		
 		//System.out.println(res.toString());
 		
@@ -204,7 +205,7 @@ class SkylineTest {
 		assertTrue(res.get(1).getId() == 4);
 		
 		String info = "Test 3, résultat = ";
-		for(Mashup m: res) {
+		for(Skylineable m: res) {
 			info += m.getName() + ", ";
 		}
 		
@@ -295,7 +296,7 @@ class SkylineTest {
 		pref.put("Cost", "<");
 		pref.put("ResponseTime", "<");
 		
-		List<Mashup> res = Skyline.computeSkyline(Skyline.mashups, pref);
+		List<Skylineable> res = Skyline.computeSkyline(Skyline.mashups, pref);
 		
 		if(res.size() != 2) log.debug("res.size() = " + res.size());
 				
@@ -305,7 +306,7 @@ class SkylineTest {
 		assertTrue(res.get(1).getId() == 10);
 		
 		String info = "Test 4, résultat = ";
-		for(Mashup m: res) {
+		for(Skylineable m: res) {
 			info += m.getName() + ", ";
 		}
 		
@@ -362,10 +363,10 @@ class SkylineTest {
 		Map<String, String> pref = new HashMap<>();
 		pref.put("Cost", "<");
 		pref.put("ResponseTime", "<");
-		List<Mashup> res = Skyline.computeSkyline(Skyline.mashups, pref);
+		List<Skylineable> res = Skyline.computeSkyline(Skyline.mashups, pref);
 		
 		String texte="res=[";
-		for(Mashup m: res) {
+		for(Skylineable m: res) {
 			texte+=m.getName()+" ";
 		}
 		log.info(texte.trim()+"]");

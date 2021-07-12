@@ -15,16 +15,8 @@ import org.apache.log4j.Logger;
 
 import test.MainTest;
 
-public class Service {
+public class Service extends Skylineable {
 	
-	/**
-	 * Identifiant du service
-	 */
-	private int id;
-	/**
-	 * Nom du service
-	 */
-	private String name;
 	/**
 	 * Liste de mots clés décrivant le service
 	 */
@@ -33,10 +25,6 @@ public class Service {
 	 * Liste de ressources LOD correspondant aux mots clés du service
 	 */
 	private List<String> LodTags;
-	/**
-	 * Une Map pour stocker les paires de chaque QoS du service, sous la forme <nomQos, valeur Qos>
-	 */
-	private Map<String, Float> QoS;
 	/**
 	 * Propriétés du service
 	 */
@@ -89,15 +77,6 @@ public class Service {
 	}
 	
 
-
-	public int getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
 	public List<String> getTags() {
 		return tags;
 	}
@@ -105,25 +84,11 @@ public class Service {
 	public List<String> getLodTags() {
 		return LodTags;
 	}
-
-	public Map<String, Float> getQoS() {
-		return QoS;
-	}
 	
 	public Map<String, String> getProperties() {
 		return properties;
 	}
 
-
-
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	public void setTags(List<String> tags) {
 		this.tags = tags;
@@ -131,10 +96,6 @@ public class Service {
 
 	public void setLodTags(List<String> lodTags) {
 		LodTags = lodTags;
-	}
-
-	public void setQoS(Map<String, Float> qoS) {
-		QoS = qoS;
 	}
 
 	public void setProperties(Map<String, String> properties) {
